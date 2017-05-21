@@ -14,58 +14,67 @@ mqd_t mqd;
 void thread1(void)
 {
 	char buffer[] = "this is thread1";
-	char buffer_r[20];
+	char buffer2[20];
 	int retval,i;
 	unsigned int prio;
 	printf("thread1: %d\n",mqd);
 	retval = mq_send(mqd,buffer,sizeof(buffer),1);
 	if(retval == -1){
 		printf("mq_send eror\n");
-		return;
+		pthread_exit(NULL);
 	}
-	/*do{
-		retval = mq_receive(mqd,buffer_r,20,&prio);
+
+	prio = 0;
+	while(prio != 2)
+	{
+		retval = mq_receive(mqd,buffer2,20,&prio);
 		if(retval == -1){
-			printf("thread1: mq_receive error\n");
-			return;
+			printf("thread2: mq_reveive error: %s\n",strerror(errno));
+			pthread_exit(NULL);
 		}
-	}while(prio != 2);
-	printf("thread1:");
-	for(i=0;i<20;i++){
-		if(*(buffer_r + i) == '\0')
-			break;
-		printf("%c",*(buffer_r + i));
 	}
-	printf("\n");*/
-	return;
+
+	printf("thread1 received:");
+	for(i=0;i<20;i++){
+		if(*(buffer2 + i) == '\0')
+			break;
+		printf("%c",*(buffer2 + i));
+	}
+	printf("\n");
+	pthread_exit(NULL);
 }
 void thread2(void)
 {
 	unsigned int prio;
 	char buffer[20];
-	char buffer_s[] = "thread2 received";
+	char buffer2[] = "this is thread2";
 	int i,retval;
 	printf("thread2: %d\n",mqd);
-	//do{
+
+	prio = 0;
+	while(prio != 1)
+	{	
 		retval = mq_receive(mqd,buffer,20,&prio);
 		if(retval == -1){
 			printf("thread2: mq_reveive error: %s\n",strerror(errno));
-			return;
+			pthread_exit(NULL);
 		}
-	//}while(prio != 1);
-	printf("thread2:");
+	}
+	printf("thread2 received:");
 	for(i=0;i<20;i++){
 		if(*(buffer + i) == '\0')
 			break;
 		printf("%c",*(buffer + i));
 	}
 	printf("\n");
-	/*retval = mq_send(mqd,buffer_s,sizeof(buffer_s),2);
+
+	retval = mq_send(mqd,buffer2,sizeof(buffer2),2);
 	if(retval == -1){
-		printf("thread2: mq_send error\n");
-		return ;
-	}*/
-	return;
+		printf("mq_send2 error: %s\n",strerror(errno));
+		pthread_exit(NULL);
+	}
+	
+	pthread_exit(NULL);
 }
 int main()
 {
@@ -81,23 +90,22 @@ int main()
 	mqd = mq_open("/wxx",O_RDWR|O_CREAT,0644, &attr);
 	if(mqd < 0){
 		printf("mq_open error\n");
-		return 0;
+		exit(0);
 	}
-	printf("main: %d\n",mqd);
-	
 	retval = pthread_create(&pid1,NULL,(void *)thread1,NULL);
 	if(retval != 0){
 		printf("creatw thread1 error\n");
-		return 0;
+		exit(0);
 	}
 
 	retval = pthread_create(&pid2,NULL,(void *)thread2,NULL);
 	if(retval != 0){
 		printf("creatw thread2 error\n");
-		return 0;
+		exit(0);
 	}
-	pthread_join(pid1,(void **)buffer);
-	pthread_join(pid1,(void **)buffer);
+	pthread_join(pid1,NULL);
+	pthread_join(pid2,NULL);
 	mq_close(mqd);
-	return 0;
+	mq_unlink("/wxx");
+	exit(0);
 }
