@@ -3,26 +3,24 @@
 #include <fcntl.h>           
 #include <sys/stat.h>        
 #include <semaphore.h>
-#include <unistd.h>
 
 sem_t *sem;
 int ga;
 
 void thread1(void)
 {
-	sleep(2);
-	sem_post(sem);
+	sem_wait(sem);
 	ga = 1;
 	printf("thread1: ga = 1\n");
+	sem_post(sem);
 	pthread_exit(NULL);
 }
 void thread2(void)
 {
 	sem_wait(sem);
-	printf("thread2:sleep 15s\n");
-	sleep(15);
 	ga = 2;
 	printf("thread2: ga = 2\n");
+	sleep(10);
 	sem_post(sem);
 	pthread_exit(NULL);
 }
