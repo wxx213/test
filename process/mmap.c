@@ -10,14 +10,14 @@
 
 int main()
 {
-	pid_t pid;
-	int fd,zero;
-	int retval;
-	int *ptr;
-	sem_t *sem;
-	int i,count = 20;
-	
-	fd = open("./wxx.txt",O_RDWR|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR);
+    pid_t pid;
+    int fd,zero;
+    int retval;
+    int *ptr;
+    sem_t *sem;
+    int i,count = 20;
+
+    fd = open("./wxx.txt",O_RDWR|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR);
     if(fd < 0)
     {
         printf("open file error\n");
@@ -53,25 +53,25 @@ int main()
     else if(0 == pid)
     {
     	for(i=0;i<count;i++)
-    	{
-    		sleep(1);
-			sem_wait(sem);
-			(*ptr) ++;
-			printf("child: %d\n",(*ptr));
-			sem_post(sem);
-		}
+        {
+    	    sleep(1);
+            sem_wait(sem);
+            (*ptr) ++;
+            printf("child: %d\n",(*ptr));
+            sem_post(sem);
+        }
     	
     }
     else
     {
     	for(i=0;i<count;i++)
     	{
-    		sleep(1);
-			sem_wait(sem);
-			(*ptr) ++;
-			printf("parent: %d\n",(*ptr));
-			sem_post(sem);
-		}
+            sleep(1);
+            sem_wait(sem);
+            (*ptr) ++;
+            printf("parent: %d\n",(*ptr));
+            sem_post(sem);
+        }
 		
     }
 	return 0;
