@@ -1,21 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
 
 pthread_mutex_t mutex;
 pthread_cond_t cond;
-int x = 0,y = 0;
+int event = 0;
 
 void thread1(void)
 {
 	while(1){
+		sleep(1);
 		pthread_mutex_lock(&mutex);
-		sleep(2);
-		/*operate x,y*/
-		if(x > y){
-			pthread_cond_signal(&cond);
-		}
+		/* process shared resources */
+		event = 1;
+		pthread_cond_signal(&cond);
 		pthread_mutex_unlock(&mutex);
+		pthread_exit(0);
 	}
 	return;
 }
@@ -23,13 +24,16 @@ void thread2(void)
 {
 	while(1){
 		pthread_mutex_lock(&mutex);
-		while(x <= y){
-			pthread_cond_wait(&cond,&mutex);
+		pthread_cond_wait(&cond,&mutex);
+		/* process shared resource */
+		if(1 == event) {
+			printf("received event from thread1\n");
 		}
-		/*operate x,y*/
-		printf("wake up\n");
-		sleep(2);
+		else {
+			printf("received other event from thread1");
+		}
 		pthread_mutex_unlock(&mutex);
+		pthread_exit(0);
 	}
 	return;
 }
