@@ -1,0 +1,28 @@
+# depslib dependency file v1.0
+1529229168 source:e:\codeblocks\projects\datastructure\trees\main.c
+	<stdio.h>
+	<stdlib.h>
+	"searchtree.h"
+	"avltree.h"
+
+1529210834 e:\codeblocks\projects\datastructure\trees\searchtree.h
+
+1529210774 source:e:\codeblocks\projects\datastructure\trees\searchtree.c
+	<stdio.h>
+	<stdlib.h>
+	"searchtree.h"
+
+1529228501 source:e:\codeblocks\projects\datastructure\trees\avltree.c
+	<stdio.h>
+	<stdlib.h>
+	"avltree.h"
+
+1529208154 e:\codeblocks\projects\datastructure\trees\avltree.h
+
+1529226660 source:e:\codeblocks\projects\datastructure\trees\splaytree.c
+	<stdio.h>
+	<stdlib.h>
+	"splaytree.h"
+
+1529226565 e:\codeblocks\projects\datastructure\trees\splaytree.h
+
