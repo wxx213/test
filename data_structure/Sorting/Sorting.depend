@@ -1,0 +1,21 @@
+# depslib dependency file v1.0
+1532850978 source:e:\codeblocks\projects\datastructure\sorting\main.c
+	<stdio.h>
+	<stdlib.h>
+	"merge_sort.h"
+	"quick_sort.h"
+
+1532849490 e:\codeblocks\projects\datastructure\sorting\merge_sort.h
+
+1532849540 source:e:\codeblocks\projects\datastructure\sorting\merge_sort.c
+	<stdio.h>
+	<stdlib.h>
+	"merge_sort.h"
+
+1532850917 source:e:\codeblocks\projects\datastructure\sorting\quick_sort.c
+	<stdio.h>
+	<stdlib.h>
+	"quick_sort.h"
+
+1532851016 e:\codeblocks\projects\datastructure\sorting\quick_sort.h
+
