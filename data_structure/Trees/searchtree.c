@@ -98,6 +98,12 @@ struct treenode *searchtree_find_min(struct treenode * proot)
         return searchtree_find_min(proot->pleft);
     }
 }
+/**
+  proot: the root node of delete tree
+  return:
+    proot->pleft when delete in left
+    proot->pright when delete in right
+**/
 struct treenode *searchtree_delete(struct treenode * proot, etype ele)
 {
     struct treenode *pnode;

@@ -11,5 +11,6 @@ struct avlnode {
 };
 
 struct avlnode *avltree_insert(struct avlnode *pnode, avl_etype ele);
-
+struct avlnode *avltree_delete(struct avlnode *pnode, avl_etype ele);
+void avltree_print(struct avlnode *proot);
 #endif // AVLTREE_H_INCLUDED
