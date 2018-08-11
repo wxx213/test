@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1528385221 source:e:\codeblocks\projects\smartpointer\main.cpp
+	<stdio.h>
+	"RefBase.h"
+
+1510928451 e:\codeblocks\projects\smartpointer\refbase.h
+	<atomic>
+	<stdint.h>
+	<sys/types.h>
+	<stdlib.h>
+	<string.h>
+	"LightRefBase.h"
+	"StrongPointer.h"
+
+1528384033 e:\codeblocks\projects\smartpointer\lightrefbase.h
+	<atomic>
+	<sys/types.h>
+	<stdio.h>
+
+1511015061 e:\codeblocks\projects\smartpointer\strongpointer.h
+	<stdio.h>
+
+1510932342 source:e:\codeblocks\projects\smartpointer\refbase.cpp
+	"RefBase.h"
+
+1511013633 source:e:\codeblocks\projects\smartpointer\strongpointer.cpp
+
