@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1533970557 source:e:\codeblocks\projects\datastructure\trees\main.c
+1533978027 source:e:\codeblocks\projects\datastructure\trees\main.c
 	<stdio.h>
 	<stdlib.h>
 	"searchtree.h"
 	"avltree.h"
+	"rbtree.h"
 
 1529210834 e:\codeblocks\projects\datastructure\trees\searchtree.h
 
@@ -31,5 +32,5 @@
 	<stdlib.h>
 	"rbtree.h"
 
-1529290451 e:\codeblocks\projects\datastructure\trees\rbtree.h
+1533976617 e:\codeblocks\projects\datastructure\trees\rbtree.h
 

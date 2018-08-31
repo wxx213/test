@@ -1,9 +1,15 @@
-#include <iostream>
 
-using namespace std;
+void user_swap(int &a, int &b)
+{
+    int c;
+    c = a;
+    a = b;
+    b = c;
+}
 
 int main()
 {
-	cout<<"Hello C++!"<<endl;
+	int x = 12, y = 16;
+	user_swap(x, y);
 	return 0;
 }

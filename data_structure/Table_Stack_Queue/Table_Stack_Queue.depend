@@ -1,8 +1,10 @@
 # depslib dependency file v1.0
-1529041230 source:e:\codeblocks\projects\datastructure\table_stack_queue\main.c
+1535731168 source:e:\codeblocks\projects\datastructure\table_stack_queue\main.c
 	<stdio.h>
 	<stdlib.h>
 	"queue.h"
+	"stack.h"
+	"list.h"
 
 1529041409 source:e:\codeblocks\projects\datastructure\table_stack_queue\queue.c
 	<stdio.h>
@@ -17,4 +19,11 @@
 	"stack.h"
 
 1529295606 e:\codeblocks\projects\datastructure\table_stack_queue\stack.h
+
+1535731954 source:e:\codeblocks\projects\datastructure\table_stack_queue\list.c
+	<stdio.h>
+	<stdlib.h>
+	"list.h"
+
+1535731940 e:\codeblocks\projects\datastructure\table_stack_queue\list.h
 
