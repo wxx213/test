@@ -3,6 +3,32 @@
 
 #include "avltree.h"
 
+int stack_empty(struct stack_user *pstack)
+{
+    return pstack->curr_p == -1;
+}
+
+void stack_init(struct stack_user *pstack)
+{
+    pstack->curr_p = -1;
+}
+
+int stack_push(struct stack_user *pstack, union context_user ele)
+{
+    if(pstack->curr_p >= (stack_depth-1)) {
+        pstack->curr_p = (stack_depth-1);
+        return -1;
+    }
+
+    pstack->ele_array[++pstack->curr_p] = ele;
+    return 0;
+}
+
+union context_user stack_pop(struct stack_user *pstack)
+{
+    return pstack->ele_array[pstack->curr_p--];
+}
+
 static int avltree_height(struct avlnode *pnode) {
     if(NULL == pnode) {
         return -1;
@@ -198,4 +224,145 @@ void avltree_print(struct avlnode *proot)
         avltree_print(proot->pright);
     }
     printf("%d ", proot->element);
+}
+
+/**
+  Simulate the function call to traversal avl tree non-recursively
+**/
+void avltree_print2(struct avlnode *proot)
+{
+    struct stack_user stack;
+    struct stack_user *pstack = &stack;
+    union context_user stack_ele;
+    struct avlnode *pnode;
+    enum context_end_child paddr;
+
+    if(NULL == proot) {
+        return;
+    }
+    stack_init(pstack);
+    pnode = proot;
+
+
+    stack_ele.pnode = pnode;
+    stack_push(pstack, stack_ele);
+    stack_ele.end_child = left_end;
+    stack_push(pstack, stack_ele);
+    pnode = pnode->pleft;
+
+    while(!stack_empty(pstack)) {
+        // enter function
+        if(NULL == pnode) { //return
+            if(stack_empty(pstack)) {
+                break;
+            }
+            stack_ele = stack_pop(pstack);
+            paddr = stack_ele.end_child;
+            if(left_end == paddr) {
+                if(stack_empty(pstack)) {
+                    break;
+                }
+                stack_ele = stack_pop(pstack);
+                pnode = stack_ele.pnode;
+                printf("%d ", pnode->element);
+                stack_ele.pnode = pnode;
+                stack_push(pstack, stack_ele);
+                stack_ele.end_child = right_end;
+                stack_push(pstack, stack_ele);
+                pnode = pnode->pright;
+                continue;
+            }
+            else { //return
+                continue;
+            }
+        }
+        else {
+            stack_ele.pnode = pnode;
+            stack_push(pstack, stack_ele);
+            stack_ele.end_child = left_end;
+            stack_push(pstack, stack_ele);
+            pnode = pnode->pleft;
+            continue;
+        }
+    }
+}
+
+/**
+  Traversal avl tree non-recursively with preorder and inorder method
+**/
+void avltree_print3(struct avlnode *proot)
+{
+    struct stack_user stack;
+    struct stack_user *pstack = &stack;
+    union context_user stack_ele;
+    struct avlnode *pnode;
+
+    if(NULL == proot) {
+        return;
+    }
+    stack_init(pstack);
+    pnode = proot;
+
+    while(!stack_empty(pstack) || pnode != NULL) {
+        if(pnode != NULL) {
+            //printf("%d ", pnode->element); //preorder
+            stack_ele.pnode = pnode;
+            stack_push(pstack, stack_ele);
+            pnode = pnode->pleft;
+        }
+        else {
+            stack_ele = stack_pop(pstack);
+            pnode = stack_ele.pnode;
+            printf("%d ", pnode->element);  //inorder
+            pnode = pnode->pright;
+        }
+    }
+
+}
+
+/**
+  Traversal avl tree non-recursively with postorder method
+**/
+void avltree_print4(struct avlnode *proot)
+{
+    struct stack_user stack;
+    struct stack_user *pstack = &stack;
+    union context_user stack_ele;
+    struct avlnode *pnode, *pright;
+    int curr;
+
+    if(NULL == proot) {
+        return;
+    }
+
+    stack_init(pstack);
+    pnode = proot;
+    pright = NULL;
+    while(!stack_empty(pstack) || pnode != NULL) {
+        while(pnode != NULL) {
+            stack_ele.pnode = pnode;
+            stack_push(pstack, stack_ele);
+            pnode = pnode->pleft;
+        }
+
+        while(1) {
+            curr = pstack->curr_p;
+            if(-1 == curr) {
+                pnode = NULL;
+                break;
+            }
+            stack_ele = pstack->ele_array[curr];
+            pnode = stack_ele.pnode;
+
+            if(NULL == pnode->pright || pnode->pright == pright) {
+                printf("%d ", pnode->element);
+                stack_ele = stack_pop(pstack);
+                pright = stack_ele.pnode;
+            }
+            else {
+                pnode = pnode->pright;
+                break;
+            }
+        }
+    }
 }

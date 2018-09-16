@@ -35,6 +35,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="doubly_list.h" />
+		<Unit filename="kernel_list.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel_list.h" />
 		<Unit filename="list.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1535731168 source:e:\codeblocks\projects\datastructure\table_stack_queue\main.c
+1535731961 source:e:\codeblocks\projects\datastructure\table_stack_queue\main.c
 	<stdio.h>
 	<stdlib.h>
 	"queue.h"
