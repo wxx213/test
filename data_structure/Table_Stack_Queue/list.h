@@ -16,4 +16,5 @@ void single_list_delete(struct single_list_head *phead, int value);
 void single_list_print(struct single_list_head *phead);
 void single_list_reverse(struct single_list_head *phead);
 void single_list_reverse2(struct single_list_head *phead);
+void single_list_reverse_print(struct single_list_head *phead);
 #endif // LIST_H_INCLUDED

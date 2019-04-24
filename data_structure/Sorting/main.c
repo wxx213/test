@@ -25,6 +25,20 @@ void shell_sort(int a[], int n)
     }
 }
 
+void bubble_sort(int a[], int n)
+{
+    int i,j, m;
+
+    for(i = 0; i < n - 1; i ++) {
+        for(j = i + 1; j < n; j ++) {
+            if(a[j] < a[i]) {
+                m = a[j];
+                a[j] = a[i];
+                a[i] = m;
+            }
+        }
+    }
+}
 int main()
 {
     int aa[] = {5, 13, 9, 2, 10, 17, 1, 0, 19, 11};
@@ -33,7 +47,8 @@ int main()
     //insertion_sort(aa, 10);
     //shell_sort(aa, 10);
     //merge_sort(aa, 10);
-    quick_sort(aa, 10);
+    //quick_sort(aa, 10);
+    bubble_sort(aa, 10);
     for(i = 0; i < 10; i ++) {
         printf("%d ", aa[i]);
     }

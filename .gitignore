@@ -1,0 +1,8 @@
+a.out
+*.o
+*.so
+process/socket/client
+process/socket/server
+test.*
+*.exe
+

@@ -107,6 +107,20 @@ void single_list_print(struct single_list_head *phead)
     printf("\n");
 }
 
+static void single_list_recursive_print(struct single_list_node *node)
+{
+    if(NULL == node) {
+        return;
+    }
+    single_list_recursive_print(node->pnext);
+    printf("%d ", node->element);
+}
+void single_list_reverse_print(struct single_list_head *phead)
+{
+    single_list_recursive_print(phead->pfirst);
+    printf("\n");
+}
+
 struct single_list_node *single_list_recur_reverse(struct single_list_node *pprev, struct single_list_node *pcurr)
 {
     struct single_list_node *ptmp;
@@ -138,4 +152,13 @@ void single_list_reverse2(struct single_list_head *phead)
         pcurr = pnext;
     }
     phead->pfirst = pprev;
+}
+
+struct single_list_head *
+single_list_merge_increased(struct single_list_head *head1
+                            struct single_list_head *head2)
+{
+    struct single_list_head *tmp;
+
+
 }
