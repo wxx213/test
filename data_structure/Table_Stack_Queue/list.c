@@ -155,7 +155,7 @@ void single_list_reverse2(struct single_list_head *phead)
 }
 
 struct single_list_head *
-single_list_merge_increased(struct single_list_head *head1
+single_list_merge_increased(struct single_list_head *head1,
                             struct single_list_head *head2)
 {
     struct single_list_head *tmp;
