@@ -5,4 +5,5 @@ process/socket/client
 process/socket/server
 test.*
 *.exe
+golang/golang
 

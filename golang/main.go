@@ -1,6 +1,11 @@
 package main
 
-import(
+/*
+void cprint();
+*/
+import "C"
+
+import (
 	"fmt"
 	"os"
 	"strings"
@@ -12,4 +17,5 @@ func main() {
 		who = strings.Join(os.Args[1:], " ")
 	}
 	fmt.Println("Hello", who)
+	C.cprint()
 }
