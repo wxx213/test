@@ -6,4 +6,4 @@ process/socket/server
 test.*
 *.exe
 golang/golang
-
+golang/process/process
