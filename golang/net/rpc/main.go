@@ -7,12 +7,13 @@ import (
 	"os/exec"
 	"errors"
 	"time"
+	"syscall"
 )
 
 var mode string
 
 func init() {
-	flag.StringVar(&mode, "m", "c", "rpc mode process to run")
+	flag.StringVar(&mode, "m", "a", "rpc mode process to run")
 }
 
 // 算数运算请求结构体
@@ -28,7 +29,7 @@ type ArithResponse struct {
 	Rem int // 余数
 }
 
-func execRPCServer() (*exec.Cmd, error) {
+func startRPCServerProcess() (*exec.Cmd, error) {
 	cmd := exec.Command(os.Args[0], "-m", "s")
 	if cmd == nil {
 		return nil, errors.New("exec.Command error")
@@ -42,14 +43,34 @@ func execRPCServer() (*exec.Cmd, error) {
 	return cmd, nil
 }
 
+func stopRPCServerProcess( cmd *exec.Cmd) {
+	proc, err := os.FindProcess(cmd.Process.Pid)
+	if err != nil {
+		fmt.Println("os.FindProcess error: %v", err)
+		return
+	}
+	err = proc.Signal(syscall.SIGINT)
+	if err != nil {
+		fmt.Println("pro.Signal error: %v", err)
+		return
+	}
+}
+
 func main() {
 	flag.Parse()
-	if mode == "c" {
-		execRPCServer()
+	if mode == "a" {
+		cmd, err := startRPCServerProcess()
+		if err != nil {
+			fmt.Println("startRPCServerProcess error: %v", err)
+			return
+		}
 		time.Sleep(1 * time.Second)
 		startRPCClient()
+		stopRPCServerProcess(cmd)
 	} else if mode == "s" {
 		startRPCServer()
+	} else if mode == "c" {
+		startRPCClient()
 	} else {
 		fmt.Println("nothing to do")
 	}
