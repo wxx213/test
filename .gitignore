@@ -8,3 +8,4 @@ test.*
 golang/golang
 golang/process/process
 golang/net/rpc/rpc
+golang/file/file
