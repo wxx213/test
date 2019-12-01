@@ -10,6 +10,8 @@ import (
 	"syscall"
 )
 
+const unix_rpc_addr = "/tmp/golang/rpc"
+const unix_rpc_dir = "/tmp/golang"
 var mode string
 
 func init() {
@@ -29,8 +31,8 @@ type ArithResponse struct {
 	Rem int // 余数
 }
 
-func startRPCServerProcess() (*exec.Cmd, error) {
-	cmd := exec.Command(os.Args[0], "-m", "s")
+func startRPCServerProcess(arg string) (*exec.Cmd, error) {
+	cmd := exec.Command(os.Args[0], "-m", arg)
 	if cmd == nil {
 		return nil, errors.New("exec.Command error")
 	}
@@ -58,10 +60,13 @@ func stopRPCServerProcess( cmd *exec.Cmd) {
 
 func main() {
 	flag.Parse()
+	var cmd *exec.Cmd
+	var err error
+
 	if mode == "a" {
-		cmd, err := startRPCServerProcess()
+		cmd, err = startRPCServerProcess("s")
 		if err != nil {
-			fmt.Println("startRPCServerProcess error: %v", err)
+			fmt.Println("startRPCServerProcess http error: %v", err)
 			return
 		}
 		time.Sleep(1 * time.Second)
@@ -71,6 +76,19 @@ func main() {
 		startRPCServer()
 	} else if mode == "c" {
 		startRPCClient()
+	} else if mode == "au" {
+		cmd, err = startRPCServerProcess("su")
+		if err != nil {
+			fmt.Println("startRPCServerProcess unix error: %v", err)
+			return
+		}
+		time.Sleep(1 * time.Second)
+		startUnixRPCClient()
+		stopRPCServerProcess(cmd)
+	} else if mode == "su" {
+		startUnixRPCServer()
+	} else if mode == "cu" {
+		startUnixRPCClient()
 	} else {
 		fmt.Println("nothing to do")
 	}
