@@ -6,6 +6,7 @@ import process.TestSleep;
 import process.TestJoin;
 import process.TestYield;
 import process.TestCallable;
+import process.ProcessTest;
 
 public class Main {
 	public static void main(String arg[]){
@@ -22,6 +23,7 @@ public class Main {
 		}
 		TestYield.testyield();
 		TestCallable.testcallable();
+		ProcessTest.TestProcess(null);
 	}
 }
 
