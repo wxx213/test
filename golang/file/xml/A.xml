@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<peoples version="0.9">
+    <people id="123">
+        <name> ZH </name>
+        <address>深圳宝安</address>
+    </people>
+    <people id="124">
+        <name> YQ </name>
+        <address>深圳福田</address>
+    </people>
+</peoples>
+
