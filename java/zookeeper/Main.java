@@ -20,6 +20,7 @@ public class Main {
 		}
 
 		ZKNodeOperator.NodeOperatorTest();
+		ZKClusterNodeOperator.ClusterNodeOperatorTest();
 	}
 }
 
