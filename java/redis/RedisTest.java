@@ -1,3 +1,4 @@
+package redistest;
 
 import java.util.List;
 
@@ -6,7 +7,7 @@ public class RedisTest {
 
 	public static void StringTest() {
 		//连接本地的 Redis 服务
-		Jedis jedis = new Jedis("localhost");
+		Jedis jedis = new Jedis("172.17.0.2");
 		System.out.println("连接状态："+jedis.ping());
 		//设置 redis 字符串数据
 		jedis.set("runoobkey", "www.runoob.com");
@@ -16,7 +17,7 @@ public class RedisTest {
 
 	public static void ListTest() {
 		//连接本地的 Redis 服务
-		Jedis jedis = new Jedis("localhost");
+		Jedis jedis = new Jedis("172.17.0.2");
 		System.out.println("连接状态："+jedis.ping());
 		//存储数据到列表中
 		jedis.lpush("site-list", "Runoob");
@@ -30,7 +31,8 @@ public class RedisTest {
 	}
 
 	public static void main(String[] args) {
-		StringTest();
-		ListTest();
+		// StringTest();
+		// ListTest();
+		RedisClusterTest.testCluster();
 	}
 }
