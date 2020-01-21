@@ -14,13 +14,15 @@ import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.Tuple;
 
 public class RedisClusterTest {
-    static JedisCluster jedis = null;
+    // static JedisCluster jedis = null;
 
     // @Before
-    public static void conn() {
+    public static JedisCluster conn() {
+		JedisCluster jedis = null;
         Set<HostAndPort> nodes = new HashSet<HostAndPort>();
         nodes.add(new HostAndPort("172.17.0.2", 6379));
         jedis = new JedisCluster(nodes);
+		return jedis;
     }
 
     /**
@@ -28,7 +30,9 @@ public class RedisClusterTest {
      */
     // @Test
     public static void operStr() {
+		JedisCluster jedis = conn();
 
+		System.out.println("开始测试string操作");
         // 添加一条数据
         jedis.set("username", "jonychen");
         // 获取一条数据
@@ -36,7 +40,7 @@ public class RedisClusterTest {
         System.out.println("用户名：" + username);
 
         // 删除
-        jedis.del("username");
+        // jedis.del("username");
     }
 
     /**
@@ -44,6 +48,9 @@ public class RedisClusterTest {
      */
     // @Test
     public static void operHash() {
+		JedisCluster jedis = conn();
+
+		System.out.println("开始测试hash操作");
         // 添加一条
         jedis.hset("goodsInfo", "goodsName", "403-超级手机");
         // 获取一条
@@ -71,7 +78,7 @@ public class RedisClusterTest {
         }
 
         // 删除
-        jedis.hdel("orderInfo", "orderStatus");
+        // jedis.hdel("orderInfo", "orderStatus");
     }
 
     /**
@@ -79,6 +86,9 @@ public class RedisClusterTest {
      */
     // @Test
     public static void operList() {
+		JedisCluster jedis = conn();
+
+		System.out.println("开始测试list操作");
         // 添加
         for (int i = 0; i < 10; i++) {
             jedis.lpush("animals", "dog" + i, "cat" + i, "fish" + i);
@@ -97,7 +107,7 @@ public class RedisClusterTest {
         Long total = jedis.llen("animals");
         System.out.println("总条数" + total);
         // 删除
-        jedis.lrem("animals", 1, "dog0");
+        // jedis.lrem("animals", 1, "dog0");
     }
 
     /**
@@ -105,6 +115,9 @@ public class RedisClusterTest {
      */
     // @Test
     public static void operSet() {
+		JedisCluster jedis = conn();
+
+		System.out.println("开始测试set操作");
         // 添加
         jedis.sadd("members", "xiaoming", "xiaohua", "xiaohui", "xiaochen");
         // 获取
@@ -121,6 +134,9 @@ public class RedisClusterTest {
      */
     // @Test
     public static void operSortedSet() {
+		JedisCluster jedis = conn();
+
+		System.out.println("开始测试sorted set操作");
         Map<String, Double> scoreMembers = new HashMap<String, Double>();
         scoreMembers.put("小明", 89D);
         scoreMembers.put("xiaopeng", 93D);
@@ -150,8 +166,8 @@ public class RedisClusterTest {
     }
 
 	public static void testCluster() {
-		conn();
 		operStr();
 		operHash();
+		operList();
 	}
 }
