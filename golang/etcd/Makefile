@@ -14,7 +14,10 @@ docker_image:
 	docker build -t etcd .
 
 etcd_cluster:
-	./deploy_etcd_cluster.sh $(ETCD_NODES)
+	./deploy_etcd_cluster.sh $(ETCD_NODES) etcd
+
+etcd_cluster_dns:
+	./deploy_etcd_cluster.sh $(ETCD_NODES) dns
 
 clean:
 	rm etcd
