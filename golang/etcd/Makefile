@@ -7,5 +7,8 @@ all:
 	go build
 	./etcd
 
+docker_image:
+	docker build -t etcd .
+
 clean:
 	rm etcd
