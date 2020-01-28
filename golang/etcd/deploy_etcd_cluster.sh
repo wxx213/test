@@ -17,7 +17,7 @@ then
 	done
 elif [ $DISCOVERY_TYPE == "dns" ]
 then
-	DISCOVERY_SRV="wxx.example.com"
+	DISCOVERY_SRV="example.com"
 
 	for((i=1;i<=$NODE_NUM;i++));
 	do
