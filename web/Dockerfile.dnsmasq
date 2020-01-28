@@ -12,8 +12,7 @@ RUN echo -e "\
 user=root\n\
 resolv-file=/etc/resolv.dnsmasq.conf\n\
 strict-order\n\
-addn-hosts=/etc/dnsmasq.hosts\n\
-listen-address=127.0.0.1\n" > /etc/dnsmasq.conf
+addn-hosts=/etc/dnsmasq.hosts\n" > /etc/dnsmasq.conf
 
 RUN touch /usr/local/bin/dnsmasq.sh
 
