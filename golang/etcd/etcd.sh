@@ -20,6 +20,8 @@ then
 	--discovery $DISCOVERY_URL &
 elif [ $ETCD_DISCOVERY_TYPE == "dns" ]
 then
+	# setup new dns server
+	/usr/bin/echo -e "nameserver 172.18.0.2" > /etc/resolv.conf
 	DISCOVERY_SRV=$WXX_ETCD_DISCOVERY_SRV
 	CLUSTER_TOKEN="etcd-cluster"
 
