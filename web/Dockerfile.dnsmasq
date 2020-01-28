@@ -1,0 +1,28 @@
+FROM centos:7
+
+RUN yum install -y vim wget net-tools make gcc bind-utils
+RUN wget http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.80.tar.gz
+RUN tar -xzvf dnsmasq-2.80.tar.gz
+RUN rm dnsmasq-2.80.tar.gz
+RUN make -C dnsmasq-2.80 && make -C dnsmasq-2.80 install
+RUN touch /etc/dnsmasq.conf /etc/dnsmasq.hosts /etc/resolv.dnsmasq.conf
+
+RUN echo -e "\
+"#!bash"\n\
+user=root\n\
+resolv-file=/etc/resolv.dnsmasq.conf\n\
+strict-order\n\
+addn-hosts=/etc/dnsmasq.hosts\n\
+listen-address=127.0.0.1\n" > /etc/dnsmasq.conf
+
+RUN touch /usr/local/bin/dnsmasq.sh
+
+RUN echo -e "\
+"#!/bin/bash"\n\
+\n\
+cp /etc/resolv.conf /etc/resolv.dnsmasq.conf\n\
+echo "nameserver 127.0.0.1" > /etc/resolv.conf\n\
+/usr/local/sbin/dnsmasq\n\
+/bin/bash\n" > /usr/local/bin/dnsmasq.sh
+
+CMD /bin/bash /usr/local/bin/dnsmasq.sh
