@@ -12,7 +12,18 @@ RUN echo -e "\
 user=root\n\
 resolv-file=/etc/resolv.dnsmasq.conf\n\
 strict-order\n\
-addn-hosts=/etc/dnsmasq.hosts\n" > /etc/dnsmasq.conf
+addn-hosts=/etc/dnsmasq.hosts\n\
+srv-host=_etcd-server._tcp.example.com,etcd_172.18.0.3_ip.example.com,2380,0,100\n\
+srv-host=_etcd-server._tcp.example.com,etcd_172.18.0.4_ip.example.com,2380,0,100\n\
+srv-host=_etcd-server._tcp.example.com,etcd_172.18.0.5_ip.example.com,2380,0,100\n\
+srv-host=_etcd-client._tcp.example.com,etcd_172.18.0.3_ip.example.com,2379,0,100\n\
+srv-host=_etcd-client._tcp.example.com,etcd_172.18.0.4_ip.example.com,2379,0,100\n\
+srv-host=_etcd-client._tcp.example.com,etcd_172.18.0.5_ip.example.com,2379,0,100\n" > /etc/dnsmasq.conf
+
+RUN echo -e "\
+172.18.0.3 etcd_172.18.0.3_ip.example.com\n\
+172.18.0.4 etcd_172.18.0.4_ip.example.com\n\
+172.18.0.5 etcd_172.18.0.5_ip.example.com\n" > /etc/dnsmasq.hosts
 
 RUN touch /usr/local/bin/dnsmasq.sh
 
