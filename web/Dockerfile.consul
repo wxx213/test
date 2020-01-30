@@ -1,0 +1,6 @@
+FROM centos:7
+
+RUN yum install -y vim wget net-tools bind-utils unzip
+RUN wget https://releases.hashicorp.com/consul/1.6.2/consul_1.6.2_linux_amd64.zip
+RUN unzip consul_1.6.2_linux_amd64.zip -d /usr/local/bin
+RUN rm consul_1.6.2_linux_amd64.zip
