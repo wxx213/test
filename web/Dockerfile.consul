@@ -4,3 +4,24 @@ RUN yum install -y vim wget net-tools bind-utils unzip
 RUN wget https://releases.hashicorp.com/consul/1.6.2/consul_1.6.2_linux_amd64.zip
 RUN unzip consul_1.6.2_linux_amd64.zip -d /usr/local/bin
 RUN rm consul_1.6.2_linux_amd64.zip
+
+RUN touch /usr/local/bin/init_consul.sh
+RUN mkdir -p /etc/consul.d
+
+# register service, or use http interface like:
+# curl -X PUT -d '{"Datacenter": "dc1", "Node": "c2", "Address": "10.155.0.106", "Service": {"Service": "MAC", "tags": ["lianglian", "Mac"], "Port": 22}}' http://127.0.0.1:8500/v1/catalog/register
+RUN echo '{"service": {"name": "web", "tags": ["rails"], "port": 80}}' > /etc/consul.d/web.json
+# and inquiry the service: dig @127.0.0.1 -p 8600 web.service.consul or curl -s 127.0.0.1:8500/v1/catalog/service/web
+
+RUN echo -e "\
+"#!/bin/bash"\n\n\
+if [ "\$CONSUL_RUN_MODE" == "\"server\"" ]\n\
+then\n\
+	/usr/local/bin/consul agent -server -bootstrap-expect 3 -join 172.18.0.2 -data-dir /tmp/consul -config-dir=/etc/consul.d/ -client 0.0.0.0\n\
+elif [ "\$CONSUL_RUN_MODE" == "\"client\"" ]\n\
+then\n\
+	/usr/local/bin/consul agent -data-dir /tmp/consul -config-dir=/etc/consul.d/ -join 172.18.0.2\n\
+fi\n\n\
+/bin/bash" > /usr/local/bin/init_consul.sh
+
+CMD /bin/bash /usr/local/bin/init_consul.sh
