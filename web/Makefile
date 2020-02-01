@@ -13,3 +13,6 @@ consul_cluster:
 	docker run -itd --name c2 --env CONSUL_RUN_MODE=server consul
 	docker run -itd --name c3 --env CONSUL_RUN_MODE=server consul
 	docker run -itd --name c4 --env CONSUL_RUN_MODE=client consul
+
+nginx_image:
+	docker build -t nginx -f Dockerfile.nginx .
