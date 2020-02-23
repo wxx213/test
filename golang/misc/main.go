@@ -11,11 +11,19 @@ import (
 	"strings"
 )
 
-func main() {
+func printHello() {
 	who := "World!"
 	if len(os.Args) > 1 {
 		who = strings.Join(os.Args[1:], " ")
 	}
 	fmt.Println("Hello", who)
+}
+
+func testC() {
 	C.cprint()
+}
+
+func main() {
+	// printHello()
+	// testC()
 }
