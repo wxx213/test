@@ -26,4 +26,5 @@ func testC() {
 func main() {
 	// printHello()
 	// testC()
+	// testInterface()
 }
