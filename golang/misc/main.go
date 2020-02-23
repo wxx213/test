@@ -27,4 +27,5 @@ func main() {
 	// printHello()
 	// testC()
 	// testInterface()
+	// testChannel()
 }
