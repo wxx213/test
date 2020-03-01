@@ -1,0 +1,37 @@
+# connect mysql
+mysql -u root -p
+
+# eg.
+show databases;
+use $database_name
+show tables;
+
+# eg1.
+create database company;
+use company;
+create table worker (nid INT UNIQUE, name VARCHAR(20), address VARCHAR(200), salary float, level int);
+insert into worker values (100, 'tom', 'beijing', 2000.0, 0);
+insert into worker values (101, 'jim', 'shanghai', 2000.0, 1);
+insert into worker values (102, 'mail', 'shanghai', 3000.0, 2);
+select * from worker;
+delete from worker where nid=100;
+update worker set level=2,salary=3000.0 where nid=101;
+# delete this database
+drop table worker;
+drop database company;
+
+# 1. database
+create database $db_name;
+drop database $db_name;
+
+# 2. table
+create table $tbl_name ();
+drop table $tbl_name;
+ 
+# 3. record
+insert into $tbl_name;
+update $tbl_name;
+delete from $tbl_name;
+
+# 4. query
+select * from worker;
