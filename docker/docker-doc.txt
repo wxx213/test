@@ -1,0 +1,3 @@
+# extract the rootfs from a docker image
+mkdir rootfs
+docker export $(docker create $(image)) | tar -C rootfs -xvf -
