@@ -1,0 +1,18 @@
+
+From
+https://spring.io/guides/gs/actuator-service/
+
+Build
+mvn clean package
+
+Run
+java -jar target/actuator-service-0.0.1-SNAPSHOT.jar
+
+Test
+curl localhost:8080/hello-world
+
+Config
+vim src/main/resources/application.properties
+  server.port: 9000
+  management.server.port: 9001
+  management.server.address: 127.0.0.1
