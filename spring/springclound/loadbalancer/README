@@ -1,0 +1,17 @@
+From
+https://spring.io/guides/gs/spring-cloud-loadbalancer/#initial
+
+Build
+mvn clean package
+
+Run
+Server
+cd say-hello && mvn spring-boot:run
+cd say-hello && SERVER_PORT=9092 mvn spring-boot:run
+cd say-hello && SERVER_PORT=9999 mvn spring-boot:run
+Proxy
+cd user && mvn spring-boot:run
+
+Test
+$ curl http://localhost:8888/hi
+$ curl http://localhost:8888/hi?name=Orontes
