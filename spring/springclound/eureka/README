@@ -1,0 +1,13 @@
+
+From
+https://github.com/spring-guides/gs-service-registration-and-discovery
+
+Build
+mvn package
+
+Run
+mvn spring-boot:run -pl eureka-service
+mvn spring-boot:run -pl eureka-client
+
+Test
+curl http://localhost:8080/service-instances/a-bootiful-client
