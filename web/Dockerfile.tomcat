@@ -1,11 +1,19 @@
 FROM centos:7
 
+ENV tomcat8_version=8.5.53
+
 RUN yum install -y wget net-tools vim
 RUN yum install -y java-1.8.0-openjdk
 
-RUN wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v8.5.50/bin/apache-tomcat-8.5.50.tar.gz
-RUN tar -xzvf apache-tomcat-8.5.50.tar.gz -C /usr/local/
-RUN rm apache-tomcat-8.5.50.tar.gz
-COPY tomcat.sh /usr/local/bin/tomcat.sh
+RUN wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v$tomcat8_version/bin/apache-tomcat-$tomcat8_version.tar.gz
+RUN tar -xzvf apache-tomcat-$tomcat8_version.tar.gz -C /usr/local/
+RUN rm apache-tomcat-$tomcat8_version.tar.gz
+RUN touch /usr/local/bin/tomcat.sh
+RUN echo -e "\
+"#!/bin/bash"\n\
+\n\
+/bin/bash /usr/local/apache-tomcat-8.5.53/bin/startup.sh\n\
+\n\
+/bin/bash" > /usr/local/bin/tomcat.sh
 
 CMD /bin/bash /usr/local/bin/tomcat.sh
