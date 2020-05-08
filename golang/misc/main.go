@@ -28,4 +28,5 @@ func main() {
 	// testC()
 	// testInterface()
 	// testChannel()
+	// testMapConcurrence()
 }
