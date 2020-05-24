@@ -72,23 +72,23 @@ function create() {
 	
 	# FROM centos:7
 	# RUN yum install -y net-tools dhclient
-	try_exec docker run -itd --cap-add NET_ADMIN --net container:$GUESTNAME --name ${GUESTNAME}_dns registry.cn-hangzhou.aliyuncs.com/wxx_image/centos:wxx
-	try_exec docker exec -it ${GUESTNAME}_dns dhclient $CONTAINER_IFNAME >/dev/null
+	try_exec docker run -itd --cap-add NET_ADMIN --net container:$GUESTNAME --name ${GUESTNAME}_dhcp registry.cn-hangzhou.aliyuncs.com/wxx_image/centos:wxx
+	try_exec docker exec -it ${GUESTNAME}_dhcp dhclient $CONTAINER_IFNAME >/dev/null
 
 	# Remove NSPID to avoid `ip netns` catch it.
 	try_exec rm -f "/var/run/netns/$NSPID"
 }
 
 function delete() {
-	try_exec docker exec -it ${GUESTNAME}_dns dhclient -r $CONTAINER_IFNAME
-	try_exec docker rm -f $GUESTNAME ${GUESTNAME}_dns
+	try_exec docker exec -it ${GUESTNAME}_dhcp dhclient -r $CONTAINER_IFNAME
+	try_exec docker rm -f $GUESTNAME ${GUESTNAME}_dhcp
 }
 
 function main() {
 	if [ -z "$OPTYPE" ]
 	then
 		echo "Usage:"
-		echo "  dockerx run name immage"
+		echo "  dockerx run name image"
 		echo "  dockerx rm name"
 		exit 1
 	elif [ $OPTYPE = "run" ]
