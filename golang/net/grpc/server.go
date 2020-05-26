@@ -25,7 +25,9 @@ import (
 	"context"
 	"log"
 	"net"
-
+	"runtime"
+	"bytes"
+	"strconv"
 	"google.golang.org/grpc"
 )
 
@@ -40,11 +42,14 @@ type server struct {
 
 // SayHello implements helloworld.GreeterServer
 func (s *server) SayHello(ctx context.Context, in *HelloRequest) (*HelloReply, error) {
+	log.Printf("grpc server interface goroutine ID is: %d\n", getGID())
 	log.Printf("Received: %v", in.GetName())
 	return &HelloReply{Message: "Hello " + in.GetName()}, nil
 }
 
 func startServer() {
+	log.Printf("grpc server goroutine ID is: %d\n", getGID())
+
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -54,4 +59,13 @@ func startServer() {
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
+}
+
+func getGID() uint64 {
+	b := make([]byte, 64)
+	b = b[:runtime.Stack(b, false)]
+	b = bytes.TrimPrefix(b, []byte("goroutine "))
+	b = b[:bytes.IndexByte(b, ' ')]
+	n, _ := strconv.ParseUint(string(b), 10, 64)
+	return n
 }
