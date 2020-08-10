@@ -29,4 +29,5 @@ func main() {
 	// testInterface()
 	// testChannel()
 	// testMapConcurrence()
+	// testHttpPprof()
 }
