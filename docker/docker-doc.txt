@@ -1,3 +1,14 @@
 # extract the rootfs from a docker image
 mkdir rootfs
 docker export $(docker create $(image)) | tar -C rootfs -xvf -
+
+# use go tool pprof
+  1. enable debug mode for docker daemon, edit /etc/docker/daemon.json
+      "debug": true
+  2. use socat to expose the daemon socket via network loopback
+      sudo socat -d -d TCP-LISTEN:${port},fork,bind=${hostip} UNIX:/var/run/docker.sock
+
+  # collect heap profile
+      go tool pprof ${hostip}:${port}/debug/pprof/heap
+  # collect a 30 second CPU profile
+      go tool pprof ${hostip}:${port}/debug/pprof/profile
