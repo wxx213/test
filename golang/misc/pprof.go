@@ -10,6 +10,10 @@ import (
 )
 
 // access pprof web page by http://${hostip}:6060/debug/pprof/
+// flame graph:
+//   go tool pprof -http 192.168.2.101:9090 http://127.0.0.1:8089/debug/pprof/profile
+// then view the flame graph by: http://192.168.2.101:9090
+// http://127.0.0.1:8089/debug/pprof/profile is the pprof address
 func testHttpPprof() {
 	go func() {
 		http.ListenAndServe(":6060", nil)
