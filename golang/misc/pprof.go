@@ -9,20 +9,32 @@ import (
 	"os"
 )
 
+func consumeMemory() {
+	a := []int {1,2,3,4,5}
+    for {
+        a = append(a, 10)
+        time.Sleep(time.Duration(1)*time.Microsecond)
+    }
+}
+
 // access pprof web page by http://${hostip}:6060/debug/pprof/
+//
 // flame graph:
 //   go tool pprof -http 192.168.2.101:9090 http://127.0.0.1:8089/debug/pprof/profile
 // then view the flame graph by: http://192.168.2.101:9090
 // http://127.0.0.1:8089/debug/pprof/profile is the pprof address
+//
+// heap:
+//   go tool pprof -alloc_space http://192.168.2.101:6060/debug/pprof/heap
 func testHttpPprof() {
 	go func() {
 		http.ListenAndServe(":6060", nil)
 	}()
 
-	a := []int {1,2,3,4,5}
+	go consumeMemory()
+
 	for {
-		a = append(a, 10)
-		time.Sleep(time.Duration(10)*time.Microsecond)
+		time.Sleep(time.Duration(100)*time.Second)
 	}
 }
 
