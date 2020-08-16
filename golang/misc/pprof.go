@@ -17,6 +17,23 @@ func consumeMemory() {
     }
 }
 
+func consumeCPU() {
+	i := 0
+
+	for {
+		i++
+	}
+}
+
+func consumeCPUShortly() {
+	i := uint64(0)
+	for {
+		i++
+		if i == 100000000000 {
+			break
+		}
+	}
+}
 // access pprof web page by http://${hostip}:6060/debug/pprof/
 //
 // flame graph:
@@ -31,7 +48,8 @@ func testHttpPprof() {
 		http.ListenAndServe(":6060", nil)
 	}()
 
-	go consumeMemory()
+	// go consumeMemory()
+	// go consumeCPU()
 
 	for {
 		time.Sleep(time.Duration(100)*time.Second)
@@ -39,17 +57,14 @@ func testHttpPprof() {
 }
 
 func testRuntimePprof() {
-	f, err := os.OpenFile("./cpu.prof", os.O_RDWR|os.O_CREATE, 0644)
+	f, err := os.OpenFile("./cpu.pprof", os.O_RDWR|os.O_CREATE, 0644)
     if err != nil {
         fmt.Println(err)
     }
     defer f.Close()
+
     pprof.StartCPUProfile(f)
     defer pprof.StopCPUProfile()
 
-	// 注意，有时候 defer f.Close()， defer pprof.StopCPUProfile() 会执行不到，
-	// 这时候我们就会看到 prof 文件是空的， 我们需要在自己代码退出的地方，增加上下面两行，
-	// 确保写文件内容了。
-	pprof.StopCPUProfile()
-	f.Close()
+	consumeCPUShortly()
 }

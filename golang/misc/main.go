@@ -30,4 +30,5 @@ func main() {
 	// testChannel()
 	// testMapConcurrence()
 	// testHttpPprof()
+	// testRuntimePprof()
 }
