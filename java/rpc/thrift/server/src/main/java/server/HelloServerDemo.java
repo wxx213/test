@@ -1,7 +1,6 @@
 package server;
 
 
-import common.HelloWorldImpl;
 import common.HelloWorldService;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
