@@ -6,8 +6,7 @@
 #         admin.serverPort=8081
 #  3. cd $(ZK_DIR)/bin && ./zkServer-initialize.sh
 #  4. cd $(ZK_DIR)/bin && ./zkServer.sh start
-#  5. cd $(ZK_DIR)/bin && ./zkCli.cmd
-#     or cd $(ZK_DIR)/bin && ./zkCli.cmd ./zkCli.sh -server localhost:2181
+#  5. cd $(ZK_DIR)/bin && ./zkCli.sh -server localhost:2181
 #
 ZK_DIR=/home/wxx123/projects/storage/apache-zookeeper-3.5.6-bin
 ZK_LIB_DIR=/home/wxx123/projects/storage/apache-zookeeper-3.5.6-bin/lib
