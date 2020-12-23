@@ -1,8 +1,6 @@
 
-all:
-	javac *.java -d .
-	java main.Main
+all: exec
+	mvn clean package
 
-clean:
-	rm -rf main
-	rm -f *.class
+exec:
+	@java -jar target/misc-1.0-SNAPSHOT.jar 
