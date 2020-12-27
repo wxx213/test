@@ -1,0 +1,2 @@
+agencyOrder = com.demo.spi.impl.AgencyOrderServiceImpl
+customerOrder = com.demo.spi.impl.CustomerOrderServiceImpl
