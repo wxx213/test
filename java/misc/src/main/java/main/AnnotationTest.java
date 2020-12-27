@@ -1,8 +1,17 @@
 package main;
 
 import java.lang.reflect.Method;
+import java.lang.annotation.*;
 
 public class AnnotationTest {
+    /**定义限额注解*/
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface MyTestAnnotation {
+        double testValue() default 10000;
+    }
+
     @MyTestAnnotation(testValue = 15000)
     public static void TestGetAnnotation(){
         processAnnotation();
