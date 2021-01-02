@@ -8,6 +8,6 @@ import org.apache.dubbo.common.extension.Adaptive;
 public interface FruitGranter {
     FruitGranter grant();
 
-    @Adaptive
+    @Adaptive("selected_granter")
     String watering(URL url);
 }

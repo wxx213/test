@@ -27,8 +27,8 @@ public class TestSpi {
     public static void testDubboAdaptiveSPI() {
         System.out.println("Dubbo Adaptive Spi Test");
         // 首先创建一个模拟用的URL对象
-        URL url = URL.valueOf("dubbo://192.168.0.101:20880?fruit.granter=apple");
-
+        // URL url = URL.valueOf("dubbo://192.168.0.101:20880?fruit.granter=apple");
+        URL url = URL.valueOf("dubbo://192.168.0.101:20880?selected_granter=banana");
         // 通过ExtensionLoader获取一个FruitGranter对象
         FruitGranter granter = ExtensionLoader.getExtensionLoader(FruitGranter.class).getAdaptiveExtension();
         // 使用该FruitGranter调用其"自适应标注的"方法，获取调用结果
