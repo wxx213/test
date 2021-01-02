@@ -1,0 +1,2 @@
+apple = com.demo.spi.impl.AppleGranter
+banana = com.demo.spi.impl.BananaGranter
