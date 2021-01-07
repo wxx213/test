@@ -7,6 +7,8 @@ public class Main {
 
 		// CompletableFutureDemoTest completableFutureDemoTest = new CompletableFutureDemoTest();
 		// completableFutureDemoTest.TestCompletableFuture();
+
+		// LambdaTest.TestLambda();
 	}
 }
 
