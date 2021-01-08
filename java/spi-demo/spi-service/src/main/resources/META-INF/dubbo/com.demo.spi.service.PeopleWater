@@ -1,0 +1,2 @@
+tom = com.demo.spi.impl.TomWater
+jack = com.demo.spi.impl.JackWater
