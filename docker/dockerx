@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# set -x
+
 #
 # config network for docker conntainer with --net=none option
 # reference: https://github.com/jpetazzo/pipework
@@ -75,6 +77,11 @@ function create() {
 	try_exec docker run -itd --cap-add NET_ADMIN --net container:$GUESTNAME --name ${GUESTNAME}_dhcp registry.cn-hangzhou.aliyuncs.com/wxx_image/centos:wxx
 	try_exec docker exec -it ${GUESTNAME}_dhcp dhclient $CONTAINER_IFNAME >/dev/null
 
+	GUSET_IP=$(docker exec -it ${GUESTNAME}_dhcp ifconfig $CONTAINER_IFNAME | grep "inet" | awk '{ print $2}')
+	GUEST_HOSTNAME=$(docker exec -it ${GUESTNAME} cat /etc/hostname)
+	if [ -n "$GUSET_IP" ] && [ -n "$GUEST_HOSTNAME" ]; then
+		docker exec -it ${GUESTNAME} bash -c "echo '$GUSET_IP $GUEST_HOSTNAME' >> /etc/hosts"
+	fi
 	# Remove NSPID to avoid `ip netns` catch it.
 	try_exec rm -f "/var/run/netns/$NSPID"
 }
