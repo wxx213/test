@@ -87,7 +87,10 @@ function create() {
 }
 
 function delete() {
-	try_exec docker exec -it ${GUESTNAME}_dhcp dhclient -r $CONTAINER_IFNAME
+	stat=` docker inspect --format {{.State.Status}} ${GUESTNAME}_dhcp`
+	if [ "$stat" = "running" ]; then
+		try_exec docker exec -it ${GUESTNAME}_dhcp dhclient -r $CONTAINER_IFNAME
+	fi
 	try_exec docker rm -f $GUESTNAME ${GUESTNAME}_dhcp
 }
 
