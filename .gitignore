@@ -14,3 +14,6 @@ golang/file/json/json
 golang/file/json/person_info.json
 golang/file/xml/B.xml
 golang/file/xml/xml
+.idea
+*.iml
+target
