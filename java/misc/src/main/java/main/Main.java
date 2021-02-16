@@ -9,6 +9,8 @@ public class Main {
 		// completableFutureDemoTest.TestCompletableFuture();
 
 		// LambdaTest.TestLambda();
+
+		// SerializableTest.testSerializable(arg);
 	}
 }
 
