@@ -25,6 +25,7 @@ public class SerializableTest {
 
     }
     public static void javaSerializable(String[] args) {
+        System.out.println("Starting test java serialization");
         try {
             FileOutputStream out =new FileOutputStream("test.txt");
             ObjectOutputStream obj_out = new ObjectOutputStream(out);
@@ -37,7 +38,7 @@ public class SerializableTest {
             ObjectInputStream ins = new ObjectInputStream(in);
             user u1 = (user)ins.readObject();
 
-            System.err.println(u1.getName());
+            System.out.println("read user: " + u1 + "\nuser.name: " + u1.getName());
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -51,6 +52,7 @@ public class SerializableTest {
     }
 
     public static void hessianSerializable(String[] args) {
+        System.out.println("Starting test hessian serialization");
         SerializerFactory serializerFactory = new SerializerFactory();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         AbstractHessianOutput out = new Hessian2Output(os);
@@ -65,7 +67,7 @@ public class SerializableTest {
             System.out.println("hessian serialize failed," + e);
         }
         byte[] bytes = os.toByteArray();
-        System.out.println(bytes);
+        System.out.println("serialized bytes: " + bytes);
 
         ByteArrayInputStream is = new ByteArrayInputStream(bytes);
         AbstractHessianInput in = new Hessian2Input(is);
@@ -78,7 +80,8 @@ public class SerializableTest {
         } catch (IOException e) {
             System.out.println("hessian deserialize failed," + e);
         }
-        System.out.println(value);
+        user u2 = (user)value;
+        System.out.println("read user: " + u2 + "\nuser.name: " + u2.getName());
     }
     public static void testSerializable(String[] args) {
         javaSerializable(args);
