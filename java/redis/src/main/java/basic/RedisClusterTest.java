@@ -1,4 +1,4 @@
-package redistest;
+package basic;
 
 import java.util.HashMap;
 import java.util.HashSet;

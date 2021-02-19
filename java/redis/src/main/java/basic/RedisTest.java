@@ -1,4 +1,4 @@
-package redistest;
+package basic;
 
 import java.util.List;
 
@@ -30,9 +30,8 @@ public class RedisTest {
 		}
 	}
 
-	public static void main(String[] args) {
-		// StringTest();
-		// ListTest();
-		RedisClusterTest.testCluster();
+	public static void startTest(String[] args) {
+		StringTest();
+		ListTest();
 	}
 }
