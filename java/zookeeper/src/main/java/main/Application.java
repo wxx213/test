@@ -1,8 +1,13 @@
-package zktest;
+package main;
+
+import zktest.ZKClusterNodeOperator;
+import zktest.ZKConnect;
+import zktest.ZKConnectSessionWatcher;
+import zktest.ZKNodeOperator;
 
 import java.io.*;
 
-public class Main {
+public class Application {
 	public static void main(String arg[]){
 		System.out.print("Hello Java!\n");
 		try {
