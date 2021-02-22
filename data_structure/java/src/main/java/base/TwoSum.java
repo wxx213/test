@@ -1,17 +1,25 @@
+package base;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 class Solution {
     public int[] twoSum(int[] nums, int target) {
-        int[] result = new int[2];
-        result[0] = 1;
-        result[1] = 2;
-        return result;
+        Map<Integer, Integer> hashTable= new HashMap<Integer, Integer>();
+        for (int i = 0; i < nums.length; ++i) {
+            if (hashTable.containsKey(target - nums[i])) {
+                return new int[]{hashTable.get(target - nums[i]), i};
+            }
+            hashTable.put(nums[i], i);
+        }
+        return new int[0];
     }
 }
 
-public class MainClass {
+public class TwoSum {
     public static int[] stringToIntegerArray(String input) {
         input = input.trim();
         input = input.substring(1, input.length() - 1);
@@ -45,7 +53,13 @@ public class MainClass {
         return integerArrayToString(nums, nums.length);
     }
 
-    public static void main(String[] args) throws IOException {
+    /*
+        输入参数应该是
+            [1,2,3,4]
+            7
+        这种格式
+     */
+    public static void testTwoSum(String[] args) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String line;
         while ((line = in.readLine()) != null) {
