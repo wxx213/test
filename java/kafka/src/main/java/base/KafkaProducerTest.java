@@ -1,4 +1,4 @@
-package kafkatest;
+package base;
 
 import java.util.Properties;
 
@@ -56,7 +56,7 @@ public class KafkaProducerTest implements Runnable {
         }
     }
     
-    public static void main(String args[]) {
+    public static void startProvider(String args[]) {
         KafkaProducerTest test = new KafkaProducerTest("KAFKA_TEST");
         Thread thread = new Thread(test);
         thread.start();

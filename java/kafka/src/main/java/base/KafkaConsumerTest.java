@@ -1,4 +1,4 @@
-package kafkatest;
+package base;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -69,7 +69,7 @@ public class KafkaConsumerTest implements Runnable {
             consumer.close();
         }
     }  
-    public static void main(String args[]) {
+    public static void startConsumer(String args[]) {
         KafkaConsumerTest test1 = new KafkaConsumerTest("KAFKA_TEST");
         Thread thread1 = new Thread(test1);
         thread1.start();
