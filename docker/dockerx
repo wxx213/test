@@ -22,29 +22,32 @@ function try_exec() {
 	fi
 }
 
-function create() {
-	GATEWAY=`route -n | grep $IFNAME | grep UG | awk '{print $2}'`
+function create_container_network() {
+  if [ -z "$1" ]; then
+    return 1
+  fi
+  cname=$1
+  GATEWAY=`route -n | grep $IFNAME | grep UG | awk '{print $2}'`
 	if [ $? -ne 0 ]
 	then
-		exit 1
+		return 1
 	fi
-	try_exec docker run -itd --net=none --name $GUESTNAME $IMAGENAME
 
-	DOCKERPID=`docker inspect --format='{{ .State.Pid }}' "$GUESTNAME"`
+	DOCKERPID=`docker inspect --format='{{ .State.Pid }}' "$cname"`
 	if [ $? -ne 0 ]
 	then
-		exit 1
+		return 1
  	fi
-	DOCKERCID=`docker inspect --format='{{ .ID }}' "$GUESTNAME"`
+	DOCKERCID=`docker inspect --format='{{ .ID }}' "$cname"`
 	if [ $? -ne 0 ]
         then
-                exit 1
+          return 1
         fi
 
-	DOCKERCNAME=`docker inspect --format='{{ .Name }}' "$GUESTNAME"`
+	DOCKERCNAME=`docker inspect --format='{{ .Name }}' "$cname"`
 	if [ $? -ne 0 ]
     then
-		exit 1
+		return 1
 	fi
 
 
@@ -55,7 +58,7 @@ function create() {
 	MTU=`ip link show "$IFNAME" | awk '{print $5}'`
 	if [ $? -ne 0 ]
     then
-    	exit 1
+    	return 1
     fi
 
 	#
@@ -71,19 +74,23 @@ function create() {
 	# set veth-pair with container namespace
 	try_exec ip link set "$GUEST_IFNAME" netns "$NSPID"
 	try_exec ip netns exec "$NSPID" ip link set "$GUEST_IFNAME" name "$CONTAINER_IFNAME"
-	
+	# Remove NSPID to avoid `ip netns` catch it.
+	try_exec rm -f "/var/run/netns/$NSPID"
+}
+
+function create() {
 	# FROM centos:7
 	# RUN yum install -y net-tools dhclient
-	try_exec docker run -itd --cap-add NET_ADMIN --net container:$GUESTNAME --name ${GUESTNAME}_dhcp registry.cn-hangzhou.aliyuncs.com/wxx_image/centos:wxx
+	try_exec docker run -itd --cap-add NET_ADMIN --net=none --name ${GUESTNAME}_dhcp registry.cn-hangzhou.aliyuncs.com/wxx_image/centos:wxx
+	try_exec create_container_network ${GUESTNAME}_dhcp
 	try_exec docker exec -it ${GUESTNAME}_dhcp dhclient $CONTAINER_IFNAME >/dev/null
 
+  try_exec docker run -itd --net container:${GUESTNAME}_dhcp --name $GUESTNAME $IMAGENAME
 	GUSET_IP=$(docker exec -it ${GUESTNAME}_dhcp ifconfig $CONTAINER_IFNAME | grep "inet" | awk '{ print $2}')
 	GUEST_HOSTNAME=$(docker exec -it ${GUESTNAME} cat /etc/hostname)
 	if [ -n "$GUSET_IP" ] && [ -n "$GUEST_HOSTNAME" ]; then
 		docker exec -it ${GUESTNAME} bash -c "echo '$GUSET_IP $GUEST_HOSTNAME' >> /etc/hosts"
 	fi
-	# Remove NSPID to avoid `ip netns` catch it.
-	try_exec rm -f "/var/run/netns/$NSPID"
 }
 
 function delete() {
@@ -94,28 +101,48 @@ function delete() {
 	try_exec docker rm -f $GUESTNAME ${GUESTNAME}_dhcp
 }
 
+function start() {
+  stat=` docker inspect --format {{.State.Status}} ${GUESTNAME}_dhcp`
+	if [ "$stat" != "running" ]; then
+		try_exec docker start ${GUESTNAME}_dhcp
+		try_exec create_container_network ${GUESTNAME}_dhcp
+		try_exec docker exec -it ${GUESTNAME}_dhcp dhclient $CONTAINER_IFNAME >/dev/null
+	fi
+	stat=` docker inspect --format {{.State.Status}} ${GUESTNAME}`
+	if [ "$stat" != "running" ]; then
+		try_exec docker start ${GUESTNAME}
+	fi
+	GUSET_IP=$(docker exec -it ${GUESTNAME}_dhcp ifconfig $CONTAINER_IFNAME | grep "inet" | awk '{ print $2}')
+	GUEST_HOSTNAME=$(docker exec -it ${GUESTNAME} cat /etc/hostname)
+	if [ -n "$GUSET_IP" ] && [ -n "$GUEST_HOSTNAME" ]; then
+		docker exec -it ${GUESTNAME} bash -c "echo '$GUSET_IP $GUEST_HOSTNAME' >> /etc/hosts"
+	fi
+}
+
 function main() {
-	if [ -z "$OPTYPE" ]
-	then
+	if [ -z "$OPTYPE" ]; then
 		echo "Usage:"
 		echo "  dockerx run name image"
 		echo "  dockerx rm name"
+		echo "  dockerx start name"
 		exit 1
-	elif [ $OPTYPE = "run" ]
-	then
-		if [ -z "$GUESTNAME" ] && [ -z "$IMAGENAME" ]
-		then
+	elif [ $OPTYPE = "run" ]; then
+		if [ -z "$GUESTNAME" ] && [ -z "$IMAGENAME" ]; then
 			exit 1
 		else
 			create
 		fi
-	elif [ $OPTYPE = "rm" ]
-	then
-		if [ -z "$GUESTNAME" ]
-		then
+	elif [ $OPTYPE = "rm" ]; then
+		if [ -z "$GUESTNAME" ]; then
 			exit 1
 		else
 			delete
+		fi
+	elif [ $OPTYPE = "start" ]; then
+		if [ -z "$GUESTNAME" ]; then
+			exit 1
+		else
+			start
 		fi
 	else
 		exit 1
