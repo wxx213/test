@@ -5,7 +5,7 @@
 
 <configuration>
     <typeAliases>
-        <package name="mybatis"/>
+        <package name="mybatis.basic"/>
     </typeAliases>
 
     <environments default="development">
@@ -21,6 +21,6 @@
     </environments>
 
     <mappers>
-        <mapper class="mybatis.UserMapper"/>
+        <mapper class="mybatis.basic.UserMapper"/>
     </mappers>
 </configuration>

@@ -1,4 +1,4 @@
-package mybatis;
+package mybatis.basic;
 import lombok.Data;
 
 /**

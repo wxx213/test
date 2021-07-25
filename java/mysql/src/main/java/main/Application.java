@@ -1,7 +1,7 @@
 package main;
 
 import basic.JdbcTest;
-import mybatis.MybatisTest;
+import mybatis.basic.MybatisTest;
 
 public class Application {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package mybatis;
+package mybatis.basic;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MybatisTest {
     public static void startMybatisTest(String[] args) {
-        String resources = "mybatis/mybatis-config.xml";
+        String resources = "mybatis/basic/mybatis-config.xml";
         InputStream in = null;
         try {
             in = Resources.getResourceAsStream(resources);
