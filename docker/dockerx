@@ -82,7 +82,7 @@ function create() {
 	try_exec create_container_network ${GUESTNAME}_dhcp
 	try_exec docker exec -it ${GUESTNAME}_dhcp dhclient $CONTAINER_IFNAME >/dev/null
 
-  try_exec docker run -itd --net container:${GUESTNAME}_dhcp --name $GUESTNAME $IMAGENAME $GUESTARG
+  try_exec docker run -itd --net container:${GUESTNAME}_dhcp --name $GUESTNAME $GUESTENV $GUESTVOLUME $IMAGENAME $GUESTARG
 	GUSET_IP=$(docker exec -it ${GUESTNAME}_dhcp ifconfig $CONTAINER_IFNAME | grep "inet" | awk '{ print $2}')
 	GUEST_HOSTNAME=$(docker exec -it ${GUESTNAME} cat /etc/hostname)
 	if [ -n "$GUSET_IP" ] && [ -n "$GUEST_HOSTNAME" ]; then
@@ -118,12 +118,23 @@ function start() {
 
 function usage() {
   echo "Usage:"
-  echo "  dockerx run NAME IMAGE [ARG...]"
+  echo "  dockerx run [-e ENV] [-v VOLUME] NAME IMAGE [ARG...]"
   echo "  dockerx rm NAME"
   echo "  dockerx start NAME"
 }
 
 function parse_run_arg() {
+	while getopts ":e:v:" OPTION
+  do
+    case $OPTION in
+      e ) GUESTENV="$GUESTENV --env $OPTARG";;
+      v ) GUESTVOLUME="$GUESTVOLUME -v $OPTARG";;
+      ? ) echo "Invalid option"
+          exit 1;;
+    esac
+  done
+
+  shift $(($OPTIND - 1))
   GUESTNAME=$1
   IMAGENAME=$2
   if [ -z "$GUESTNAME" ] && [ -z "$IMAGENAME" ]; then
