@@ -6,9 +6,6 @@
 # config network for docker conntainer with --net=none option
 # reference: https://github.com/jpetazzo/pipework
 #
-OPTYPE=$1
-GUESTNAME=$2
-IMAGENAME=$3
 
 IFNAME=br0
 CONTAINER_IFNAME=eth1
@@ -85,7 +82,7 @@ function create() {
 	try_exec create_container_network ${GUESTNAME}_dhcp
 	try_exec docker exec -it ${GUESTNAME}_dhcp dhclient $CONTAINER_IFNAME >/dev/null
 
-  try_exec docker run -itd --net container:${GUESTNAME}_dhcp --name $GUESTNAME $IMAGENAME
+  try_exec docker run -itd --net container:${GUESTNAME}_dhcp --name $GUESTNAME $IMAGENAME $GUESTARG
 	GUSET_IP=$(docker exec -it ${GUESTNAME}_dhcp ifconfig $CONTAINER_IFNAME | grep "inet" | awk '{ print $2}')
 	GUEST_HOSTNAME=$(docker exec -it ${GUESTNAME} cat /etc/hostname)
 	if [ -n "$GUSET_IP" ] && [ -n "$GUEST_HOSTNAME" ]; then
@@ -119,32 +116,62 @@ function start() {
 	fi
 }
 
-function main() {
-	if [ -z "$OPTYPE" ]; then
-		echo "Usage:"
-		echo "  dockerx run name image"
-		echo "  dockerx rm name"
-		echo "  dockerx start name"
+function usage() {
+  echo "Usage:"
+  echo "  dockerx run NAME IMAGE [ARG...]"
+  echo "  dockerx rm NAME"
+  echo "  dockerx start NAME"
+}
+
+function parse_run_arg() {
+  GUESTNAME=$1
+  IMAGENAME=$2
+  if [ -z "$GUESTNAME" ] && [ -z "$IMAGENAME" ]; then
+    echo "Invalid NAME or IMAGE"
 		exit 1
-	elif [ $OPTYPE = "run" ]; then
-		if [ -z "$GUESTNAME" ] && [ -z "$IMAGENAME" ]; then
-			exit 1
-		else
-			create
-		fi
+	fi
+	shift 2
+	GUESTARG=$*
+}
+
+function parse_rm_arg() {
+  GUESTNAME=$1
+  if [ -z "$GUESTNAME" ]; then
+    echo "Invalid NAME"
+    exit 1
+  fi
+}
+
+function parse_start_arg() {
+  GUESTNAME=$1
+  if [ -z "$GUESTNAME" ]; then
+    echo "Invalid NAME"
+    exit 1
+  fi
+}
+
+function main() {
+  if [ $# -lt 1 ]; then
+      usage
+      exit 0
+  fi
+  OPTYPE=$1
+
+	if [ $OPTYPE = "run" ]; then
+	  shift 1
+	  parse_run_arg $*
+		create
 	elif [ $OPTYPE = "rm" ]; then
-		if [ -z "$GUESTNAME" ]; then
-			exit 1
-		else
-			delete
-		fi
+	  shift 1
+	  parse_rm_arg $*
+		delete
 	elif [ $OPTYPE = "start" ]; then
-		if [ -z "$GUESTNAME" ]; then
-			exit 1
-		else
-			start
-		fi
+	  shift 1
+	  parse_start_arg $*
+		start
 	else
+	  echo "Invalid command"
+    usage
 		exit 1
 	fi
 	exit 0
