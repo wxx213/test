@@ -6,6 +6,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <unistd.h>
 
 int main()
 {
@@ -36,13 +37,23 @@ int main()
 		close(listen_fd);
 		return 0;
 	}
-	connect_fd = accept(listen_fd,(struct sockaddr *)&client_addr,&client_addr_len);
-	if(connect_fd < 0){
-		printf("accept error: %s\n",strerror(errno));
-		close(listen_fd);
-		return 0;
+	while (1)
+	{
+		connect_fd = accept(listen_fd,(struct sockaddr *)&client_addr,&client_addr_len);
+		if(connect_fd < 0){
+			printf("accept error: %s\n",strerror(errno));
+			close(listen_fd);
+			return 0;
+		}
+		while (1)
+		{
+			retval = recv(connect_fd, buffer, sizeof(buffer), 0);
+			if (retval <= 0)
+			{
+				close(connect_fd);
+				break;
+			}
+		}
 	}
-	sleep(5);
-	close(connect_fd);
 	close(listen_fd);
 }

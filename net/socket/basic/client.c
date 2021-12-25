@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if(fd == -1)
     {
-        perror("error in create　socket\n");
+        perror("error in create　socket");
         return 1;
     }
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
     int ret = connect(fd, (struct sockaddr*)&addr, sizeof(addr));
     if(ret == -1)
     {
-        perror("error in connect socket\n");
+        perror("error in connect socket");
         return 1;
     }
     close(fd);
