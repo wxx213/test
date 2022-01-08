@@ -1,0 +1,75 @@
+#!/bin/bash
+
+set -e
+
+VMIMAGE="registry.cn-hangzhou.aliyuncs.com/wxx_image/centos:linux-kernel-runtime"
+QEMU="/opt/linux-kernel/qemu/usr/local/bin/qemu-system-x86_64"
+CPUS=2
+MEMORY=4096M
+KERNEL_IMAGE="/opt/linux-kernel/bzImage"
+KERNEL_CMDLINE="\"root=/dev/vda rw rootfstype=ext4 console=ttyS0 crashkernel=64M@16M\""
+ROOTFS_IMAGE="/opt/linux-kernel/qemu-root.img"
+QEMU_NET_SCRIPT="/opt/linux-kernel/qemu/etc/qemu-ifup"
+QEMU_NET_DOWNSCRIPT="/opt/linux-kernel/qemu/etc/qemu-ifdown"
+QEMU_NET_MAC=$(echo 52:`od /dev/urandom -w5 -tx1 -An|head -n 1|sed -e 's/ //' -e 's/ /:/g'`)
+QEMU_SOCK="/opt/linux-kernel/serial.sock"
+
+CONTAINERID=""
+
+function run() {
+	docker run -td --cap-add NET_ADMIN --device /dev/net/tun:/dev/net/tun:rw \
+		--device /dev/kvm:/dev/kvm:rw $VMIMAGE bash -c "$QEMU -smp $CPUS -m $MEMORY -kernel $KERNEL_IMAGE \
+		-nographic -append $KERNEL_CMDLINE -enable-kvm -cpu qemu64,svm=on,npt=on \
+		-drive file=$ROOTFS_IMAGE,if=none,id=drive-virtio-disk0 \
+		-device virtio-blk-pci,scsi=off,num-queues=2,drive=drive-virtio-disk0,id=virtio-disk0,disable-legacy=on,disable-modern=off,iommu_platform=on,ats=on \
+		-netdev tap,id=hostnet0,script=$QEMU_NET_SCRIPT,downscript=$QEMU_NET_DOWNSCRIPT \
+		-device virtio-net-pci,netdev=hostnet0,id=net0,mac=$QEMU_NET_MAC \
+		-fsdev local,security_model=passthrough,id=fsdev0,path=/var/share \
+		-device virtio-9p-pci,id=fs0,fsdev=fsdev0,mount_tag=hostshare \
+		-serial unix:$QEMU_SOCK,server,nowait"
+}
+
+function parse_attach_arg() {
+	CONTAINERID=$1
+	if [ -z "$CONTAINERID" ]; then
+		echo "Invalid container id"
+		exit 1
+	fi
+}
+
+# exit with "control + q"
+function attach() {
+	docker exec -it $CONTAINERID socat "stdin,raw,echo=0,escape=0x11" "unix-connect:${QEMU_SOCK}"
+}
+
+function usage() {
+	echo ""
+	echo "Usage:  dockervm COMMAND"
+	echo ""
+	echo "A tool to run vm in docker container"
+	echo ""
+	echo "  dockervm run"
+	echo "  dockervm attach CONTAINER"
+}
+
+function main() {
+	if [ $# -lt 1 ]; then
+		usage
+		exit 0
+	fi
+	OPTYPE=$1
+
+	if [ $OPTYPE = "run" ]; then
+		run
+	elif [ $OPTYPE = "attach" ]; then
+		shift 1
+		parse_attach_arg $*
+		attach
+	else
+		echo "Invalid command"
+		usage
+		exit 1
+	fi
+}
+
+main $@
