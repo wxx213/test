@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# set -x
-# set -e
+#set -x
 
 VMIMAGE="registry.cn-hangzhou.aliyuncs.com/wxx_image/centos:linux-kernel-runtime"
 QEMU="/opt/linux-kernel/qemu/usr/local/bin/qemu-system-x86_64"
@@ -134,6 +133,31 @@ function create() {
 		-serial unix:$QEMU_SOCK,server,nowait"
 }
 
+function parse_start_arg() {
+        CONTAINERID=$1
+        if [ -z "$CONTAINERID" ]; then
+                echo "Invalid container id"
+                exit 1
+        fi
+}
+
+function start() {
+	local dhcp_cid_env=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{println $value}}{{end}}' $CONTAINERID | grep NET_CONTAINERID)
+	if [ -n "$dhcp_cid_env" ]; then
+		local dhcp_cid=$(echo $dhcp_cid_env | cut -d = -f 2)
+		stat=`docker inspect --format {{.State.Status}} $dhcp_cid`
+		if [ "$stat" != "running" ]; then
+			try_exec docker start $dhcp_cid
+			try_exec create_container_network $dhcp_cid
+			try_exec docker exec -it $dhcp_cid dhclient $CONTAINER_IFNAME >/dev/null
+		fi
+	fi
+	stat=`docker inspect --format {{.State.Status}} $CONTAINERID`
+	if [ "$stat" != "running" ]; then
+		try_exec docker start $CONTAINERID
+	fi
+}
+
 function parse_attach_arg() {
 	CONTAINERID=$1
 	if [ -z "$CONTAINERID" ]; then
@@ -173,8 +197,9 @@ function usage() {
 	echo "A tool to run vm in docker container"
 	echo ""
 	echo "  dockervm create [-N like_host|default -n NAME]"
+	echo "  dockervm start  CONTAINER"
 	echo "  dockervm attach CONTAINER"
-	echo "  dockervm delete CONTAINER"
+	echo "  dockervm rm     CONTAINER"
 }
 
 function main() {
@@ -188,11 +213,15 @@ function main() {
 		shift 1
 		parse_create_arg $*
 		create
+	elif [ $OPTYPE = "start" ]; then
+		shift 1
+		parse_start_arg $*
+		start
 	elif [ $OPTYPE = "attach" ]; then
 		shift 1
 		parse_attach_arg $*
 		attach
-	elif [ $OPTYPE = "delete" ]; then
+	elif [ $OPTYPE = "rm" ]; then
 		shift 1
 		parse_delete_arg $*
 		delete
