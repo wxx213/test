@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"grpc/generated/helloword"
 )
 
 const (
@@ -40,7 +41,7 @@ func startClient() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := NewGreeterClient(conn)
+	c := helloword.NewGreeterClient(conn)
 
 	// Contact the server and print out its response.
 	name := defaultName
@@ -49,7 +50,7 @@ func startClient() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.SayHello(ctx, &HelloRequest{Name: name})
+	r, err := c.SayHello(ctx, &helloword.HelloRequest{Name: name})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
