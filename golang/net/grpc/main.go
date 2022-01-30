@@ -1,13 +1,15 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
+	"com.example.grpc/client"
+	"com.example.grpc/server"
 	"os"
 	"os/exec"
-	"errors"
-	"time"
 	"syscall"
+	"time"
 )
 
 var mode string
@@ -24,13 +26,13 @@ func startRPCServerProcess(arg string) (*exec.Cmd, error) {
 	err := cmd.Start()
 	if err != nil {
 		fmt.Println(err)
-		 return nil, err
+		return nil, err
 	}
 	// fmt.Println("the path is %s", os.Args[0])
 	return cmd, nil
 }
 
-func stopRPCServerProcess( cmd *exec.Cmd) {
+func stopRPCServerProcess(cmd *exec.Cmd) {
 	proc, err := os.FindProcess(cmd.Process.Pid)
 	if err != nil {
 		fmt.Println("os.FindProcess error: %v", err)
@@ -55,12 +57,12 @@ func main() {
 			return
 		}
 		time.Sleep(1 * time.Second)
-		startClient()
+		client.StartClient()
 		stopRPCServerProcess(cmd)
 	} else if mode == "s" {
-		startServer()
+		server.StartServer()
 	} else if mode == "c" {
-		startClient()
+		client.StartClient()
 	} else {
 		fmt.Println("nothing to do")
 	}

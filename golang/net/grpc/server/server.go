@@ -1,14 +1,14 @@
-package main
+package server
 
 import (
+	"bytes"
 	"context"
+	"google.golang.org/grpc"
+	"com.example.grpc/generated/helloword"
 	"log"
 	"net"
 	"runtime"
-	"bytes"
 	"strconv"
-	"google.golang.org/grpc"
-	"grpc/generated/helloword"
 )
 
 const (
@@ -27,7 +27,16 @@ func (s *server) SayHello(ctx context.Context, in *helloword.HelloRequest) (*hel
 	return &helloword.HelloReply{Message: "Hello " + in.GetName()}, nil
 }
 
-func startServer() {
+func getGID() uint64 {
+	b := make([]byte, 64)
+	b = b[:runtime.Stack(b, false)]
+	b = bytes.TrimPrefix(b, []byte("goroutine "))
+	b = b[:bytes.IndexByte(b, ' ')]
+	n, _ := strconv.ParseUint(string(b), 10, 64)
+	return n
+}
+
+func testBasic() {
 	log.Printf("grpc server goroutine ID is: %d\n", getGID())
 
 	lis, err := net.Listen("tcp", port)
@@ -40,12 +49,6 @@ func startServer() {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }
-
-func getGID() uint64 {
-	b := make([]byte, 64)
-	b = b[:runtime.Stack(b, false)]
-	b = bytes.TrimPrefix(b, []byte("goroutine "))
-	b = b[:bytes.IndexByte(b, ' ')]
-	n, _ := strconv.ParseUint(string(b), 10, 64)
-	return n
+func StartServer() {
+	testBasic()
 }
