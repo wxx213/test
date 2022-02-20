@@ -25,5 +25,6 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 
 ```shell
 protoc -I . --go_out=plugins=grpc:. helloworld.proto
+protoc -I . --go_out=plugins=grpc:. route_guide.proto
 ```
 

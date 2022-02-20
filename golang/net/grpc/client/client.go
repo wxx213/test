@@ -38,5 +38,6 @@ func testBasic() {
 	log.Printf("Greeting: %s", r.GetMessage())
 }
 func StartClient() {
-	testBasic()
+	// testBasic()
+	testRouteGuide()
 }

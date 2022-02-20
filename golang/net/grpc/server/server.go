@@ -50,5 +50,6 @@ func testBasic() {
 	}
 }
 func StartServer() {
-	testBasic()
+	// testBasic()
+	testRouteGuide()
 }
