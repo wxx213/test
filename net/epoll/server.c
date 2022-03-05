@@ -46,41 +46,57 @@ void handleReadWrite(int fd)
     
 }
 
-int main()
-{
-    printf("server start!\n");
-    
+int createFD(int port) {
     //创建套接字
     int listenFd = socket(AF_INET, SOCK_STREAM,0);
     if(listenFd == -1){
         perror("create socket filed");
-        exit(1);
+        return -1;
     }
+
+    //设置端口复用
+    int opt = 1;
+    setsockopt(listenFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
     //设定端口,IPV4协议
     struct sockaddr_in serverAddr;
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(10000);
+    serverAddr.sin_port = htons(port);
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    //设置端口复用
-    int opt = 1;
-    setsockopt(listenFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     
     //绑定端口
     int ret = -1;
     ret = bind(listenFd, (struct sockaddr*) &serverAddr, sizeof(serverAddr));
     if(ret == -1){
         perror("bind socker error");
-        exit(1);
+        close(listenFd);
+        return -1;
     }
 
     //监听端口
     ret = listen(listenFd, 64);//64位置为等待连接队列长度
     if(ret == -1){
         perror("listen socker error");
-        exit(1);
+        close(listenFd);
+        return -1;
+    }
+    return listenFd;
+}
+
+int main()
+{
+    printf("server start!\n");
+
+    int listenFd1 = createFD(9001);
+    if (listenFd1 < 0) {
+        perror("createFD listenFd1 error");
+        return 1;
+    }
+    int listenFd2 = createFD(9002);
+    if (listenFd2 < 0) {
+        perror("createFD listenFd2 error");
+        return 1;
     }
 
     //目前为止，已经有一个绑定并且监听listenFd这个文件描述符号，
@@ -95,7 +111,13 @@ int main()
     }
 
     //往epoll实例里添加　写事件监听　和　对应文件描述符
-    epollAddFd(epollFd, listenFd, EPOLLIN);
+    if (!epollAddFd(epollFd, listenFd1, EPOLLIN)) {
+        return 1;
+    }
+    if (!epollAddFd(epollFd, listenFd2, EPOLLIN)) {
+        return 1;
+    }
+
     
     //待检测事件集合
     struct epoll_event events[1024];
@@ -109,7 +131,7 @@ int main()
         {
             int curFd = events[i].data.fd;
             //如果是连接事件就绪
-            if(curFd == listenFd)
+            if(curFd == listenFd1 || curFd == listenFd2)
             {
                 int tempFd = accept(curFd, NULL, NULL);
                 printf("连接事件就绪,新的Fd:%d\n", tempFd);
