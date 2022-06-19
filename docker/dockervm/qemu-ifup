@@ -1,0 +1,18 @@
+#! /bin/sh
+# Script to bring a network (tap) device for qemu up.
+# The idea is to add the tap device to the same bridge
+# as we have default routing to.
+
+set -e
+
+VETH=eth0
+TAP=$1
+
+ip link set $VETH up
+ip link set $TAP up
+
+ip addr flush dev $VETH
+tc qdisc add dev $VETH ingress
+tc qdisc add dev $TAP ingress
+tc filter add dev $VETH parent ffff: protocol all u32 match u8 0 0 action mirred egress redirect dev $TAP
+tc filter add dev $TAP parent ffff: protocol all u32 match u8 0 0 action mirred egress redirect dev $VETH
