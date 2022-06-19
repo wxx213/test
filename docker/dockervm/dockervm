@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+#set -x
 
 VMIMAGE="registry.cn-hangzhou.aliyuncs.com/wxx_image/centos:dockervm"
 QEMU="/opt/linux-kernel/qemu/usr/local/bin/qemu-system-x86_64"
@@ -114,7 +114,7 @@ function create() {
 	fi
 	local cid=$(docker run -td $name_opt --cap-add NET_ADMIN  --device /dev/net/tun:/dev/net/tun:rw \
 		--device /dev/kvm:/dev/kvm:rw --env QEMU=$QEMU --env QEMU_OPT="$QEMU_OPT" $net_opt \
-		$VMIMAGE /var/dockervm/start_qemu.sh)
+		--env NET_TYPE=$NET_TYPE --tmpfs /run $VMIMAGE /var/dockervm/start_qemu.sh)
 	if [ "$NET_TYPE" = "bridge" ]; then
 		try_exec create_container_network $cid
 	fi
@@ -130,13 +130,15 @@ function parse_start_arg() {
 }
 
 function start() {
+	local net_type_env=$(docker inspect -f '{{range $index, $value := .Config.Env}}{{println $value}}{{end}}' $CONTAINERID | grep NET_TYPE)
+	local net_type=$(echo $net_type_env | cut -d = -f 2)
 	stat=`docker inspect --format {{.State.Status}} $CONTAINERID`
 	if [ "$stat" != "running" ]; then
 		try_exec docker start $CONTAINERID
-		if [ "$NET_TYPE" = "bridge" ]; then
-			try_exec create_container_network $cid
+		if [ "$net_type" = "bridge" ]; then
+			try_exec create_container_network $CONTAINERID
 		fi
-		try_exec docker exec $cid touch /run/dockervm_net.done
+		try_exec docker exec $CONTAINERID touch /run/dockervm_net.done
 	fi
 }
 
