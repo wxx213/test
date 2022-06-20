@@ -12,7 +12,7 @@ QEMU_NET_DOWNSCRIPT="/var/dockervm/qemu-ifdown"
 QEMU_NET_MAC=$(echo 52:`od /dev/urandom -w5 -tx1 -An|head -n 1|sed -e 's/ //' -e 's/ /:/g'`)
 QEMU_SOCK="/run/dockervm.sock"
 
-QEMU_OPT="-smp 1 -m 2048M -nographic -enable-kvm -hda /var/dockervm/linux.img -serial unix:$QEMU_SOCK,server,nowait"
+QEMU_OPT="-smp $CPUS -m $MEMORY -nographic -enable-kvm -drive file=/var/dockervm/linux.img,if=none,id=drive-virtio-disk0 -device virtio-blk-pci,drive=drive-virtio-disk0,id=virtio-disk0 -serial unix:$QEMU_SOCK,server,nowait"
 
 CONTAINERID=""
 CONTAINER_NAME=""
