@@ -11,6 +11,7 @@ QEMU_NET_SCRIPT="/var/dockervm/qemu-ifup"
 QEMU_NET_DOWNSCRIPT="/var/dockervm/qemu-ifdown"
 QEMU_NET_MAC=$(echo 52:`od /dev/urandom -w5 -tx1 -An|head -n 1|sed -e 's/ //' -e 's/ /:/g'`)
 QEMU_SOCK="/run/dockervm.sock"
+GUEST_OS=""
 
 QEMU_OPT="-smp $CPUS -m $MEMORY -nographic -enable-kvm -drive file=/var/dockervm/linux.img,if=none,id=drive-virtio-disk0 -device virtio-blk-pci,drive=drive-virtio-disk0,id=virtio-disk0 -serial unix:$QEMU_SOCK,server,nowait"
 
@@ -87,17 +88,22 @@ function create_container_network() {
 }
 
 function parse_create_arg() {
-	while getopts ":N:n:" OPTION
+	while getopts ":N:n:I:" OPTION
 	do
 		case $OPTION in
 			N ) NET_TYPE="$OPTARG";;
 			n ) CONTAINER_NAME="$OPTARG";;
+			I ) GUEST_OS="$OPTARG";;
 		esac
 	done
 	if [ "$NET_TYPE" = "bridge" ]; then
 		QEMU_OPT="$QEMU_OPT -netdev tap,id=hostnet0,script=$QEMU_NET_SCRIPT,downscript=$QEMU_NET_DOWNSCRIPT -device virtio-net-pci,netdev=hostnet0,id=net0,mac=$QEMU_NET_MAC"
 	else
-		QEMU_OPT="$QEMU_OPT -net nic -net user"
+		QEMU_OPT="$QEMU_OPT -net nic -net user,hostfwd=tcp::10022-:22"
+	fi
+
+	if [ -n "$GUEST_OS" ]; then
+		VMIMAGE="$VMIMAGE"_"$GUEST_OS"
 	fi
 }
 
@@ -174,7 +180,7 @@ function usage() {
 	echo ""
 	echo "A tool to run vm in docker container"
 	echo ""
-	echo "  dockervm create [-N user(default)|bridge -n NAME]"
+	echo "  dockervm create [-N user(default)|bridge -I OS -n NAME]"
 	echo "  dockervm start  CONTAINER"
 	echo "  dockervm attach CONTAINER"
 	echo "  dockervm rm     CONTAINER"
